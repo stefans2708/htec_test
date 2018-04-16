@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DisplayList"></activity>
+        <activity android:name=".DisplayList" />
+        <activity android:name=".SingleItem"></activity>
     </application>
 
 </manifest>
