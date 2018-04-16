@@ -64,7 +64,7 @@ public class DisplayList extends AppCompatActivity {
                                 items.add(item);
                                 count++;
                             }
-                            adapter = new ItemAdapter(items);
+                            adapter = new ItemAdapter(DisplayList.this,items);
                             recyclerView.setAdapter(adapter);
 
                         } catch (JSONException e) {
