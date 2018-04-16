@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">My Application</string>
+    <string name="welcome_message">Welcome to my test application. I hope you are going to like it.</string>
+    <string name="btn_display_list">Display List</string>
 </resources>
