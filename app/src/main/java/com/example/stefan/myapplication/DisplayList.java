@@ -1,6 +1,7 @@
 package com.example.stefan.myapplication;
 
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,47 +41,61 @@ public class DisplayList extends AppCompatActivity {
 
         items = new ArrayList<>();
 
-        fetchData();
+        new FetchData().execute();
     }
 
-    private void fetchData() {
-        final ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading data...");
-        progressDialog.show();
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null,
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        progressDialog.dismiss();
-                        try {
-                            int count = 0;
-                            while(count < response.length()) {
+    private class FetchData extends AsyncTask<Void,Void,Void>{
 
-                                JSONObject jsonObject = response.getJSONObject(count);
-                                Item item = new Item(jsonObject.getString("title"),
-                                        jsonObject.getString("description"),
-                                        jsonObject.getString("image"));
-                                items.add(item);
-                                count++;
+        ProgressDialog progressDialog;
+
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(DisplayList.this);
+            progressDialog.setMessage("Loading data...");
+            progressDialog.show();
+        }
+
+        protected Void doInBackground(Void... voids) {
+
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null,
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            try {
+                                int count = 0;
+                                while(count < response.length()) {
+
+                                    JSONObject jsonObject = response.getJSONObject(count);
+                                    Item item = new Item(jsonObject.getString("title"),
+                                            jsonObject.getString("description"),
+                                            jsonObject.getString("image"));
+                                    items.add(item);
+                                    count++;
+                                }
+
+                                adapter = new ItemAdapter(DisplayList.this,items);
+                                recyclerView.setAdapter(adapter);
+                            } catch (JSONException e) {
+                                Toast.makeText(DisplayList.this,"Problems while fetching data...",Toast.LENGTH_LONG).show();
+                                e.printStackTrace();
                             }
-                            adapter = new ItemAdapter(DisplayList.this,items);
-                            recyclerView.setAdapter(adapter);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
-                },
-                new Response.ErrorListener(){
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(DisplayList.this,"Error while fetching data...",Toast.LENGTH_LONG).show();
-                        error.printStackTrace();
-                    }
-                });
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        requestQueue.add(jsonArrayRequest);
+                    },
+                    new Response.ErrorListener(){
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(DisplayList.this,"Error while fetching data...",Toast.LENGTH_LONG).show();
+                            error.printStackTrace();
+                        }
+                    });
+            RequestQueue requestQueue = Volley.newRequestQueue(DisplayList.this);
+            requestQueue.add(jsonArrayRequest);
+
+            return null;
+        }
+
+        protected void onPostExecute(Void unused) {
+            progressDialog.dismiss();
+        }
     }
 }
