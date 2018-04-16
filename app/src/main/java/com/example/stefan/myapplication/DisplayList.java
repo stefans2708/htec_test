@@ -28,7 +28,7 @@ public class DisplayList extends AppCompatActivity {
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     ArrayList<Item> items;
-    String URL = "https://raw.githubusercontent.com/danieloskarsson/mobile-coding-exercise/master/items.json";
+    String url = "https://raw.githubusercontent.com/danieloskarsson/mobile-coding-exercise/master/items.json";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +57,7 @@ public class DisplayList extends AppCompatActivity {
 
         protected Void doInBackground(Void... voids) {
 
-            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, URL, null,
+            JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                     new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
